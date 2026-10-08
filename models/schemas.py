@@ -1,7 +1,7 @@
 """Pydantic schemas for request and response validation."""
 
-from typing import Literal
-from pydantic import BaseModel, Field
+from typing import Literal, Optional
+from pydantic import BaseModel, Field, field_validator
 
 
 class AnalyzeRequest(BaseModel):
@@ -10,6 +10,13 @@ class AnalyzeRequest(BaseModel):
     status: str = Field(..., description="Pipeline execution status (e.g. failed)")
     logs: str = Field(..., description="Pipeline execution logs")
     language: str = Field(default="english", description="Explanation language ('english' or 'hinglish')")
+
+    @field_validator("logs")
+    @classmethod
+    def validate_logs(cls, v: str) -> str:
+        if not v or not v.strip():
+            raise ValueError("Logs cannot be empty or whitespace only")
+        return v
 
 
 class AnalyzeResponse(BaseModel):
@@ -29,3 +36,18 @@ class Diagnosis(BaseModel):
     evidence: list[str] = Field(default_factory=list, description="Matching log lines providing evidence (max 5)")
     confidence: float = Field(..., ge=0.0, le=1.0, description="Detection confidence between 0.0 and 1.0")
 
+
+class AnalysisResponse(BaseModel):
+    job_id: str = Field(..., description="Unique job ID")
+    repository: str = Field(..., description="Repository name")
+    pipeline: str = Field(..., description="Pipeline name")
+    status: str = Field(..., description="Job execution status ('queued', 'processing', 'done', 'failed')")
+    language: str = Field(default="english", description="Explanation language")
+    created_at: Optional[str] = Field(default=None, description="Creation timestamp")
+    category: Optional[str] = Field(default=None, description="Detected error category")
+    severity: Optional[str] = Field(default=None, description="Detected severity level")
+    root_cause: Optional[str] = Field(default=None, description="Identified root cause")
+    fix: Optional[str] = Field(default=None, description="Recommended fix")
+    evidence: Optional[list[str]] = Field(default=None, description="Matching evidence lines")
+    confidence: Optional[float] = Field(default=None, description="Detection confidence")
+    error: Optional[str] = Field(default=None, description="Failure error details")
