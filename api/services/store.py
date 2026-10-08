@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 import threading
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 
 class ResultStore(ABC):
@@ -21,6 +21,11 @@ class ResultStore(ABC):
     @abstractmethod
     def update_status(self, job_id: str, status: str, **kwargs: Any) -> None:
         """Update job status and any additional fields."""
+        pass
+
+    @abstractmethod
+    def list_recent(self, limit: int = 10) -> List[Dict[str, Any]]:
+        """List most recent analysis records, newest first."""
         pass
 
 
@@ -45,3 +50,13 @@ class InMemoryStore(ResultStore):
             if job_id in self._store:
                 self._store[job_id]["status"] = status
                 self._store[job_id].update(kwargs)
+
+    def list_recent(self, limit: int = 10) -> List[Dict[str, Any]]:
+        with self._lock:
+            records = list(self._store.values())
+            records_sorted = sorted(
+                records,
+                key=lambda r: r.get("created_at") or "",
+                reverse=True,
+            )
+            return [dict(r) for r in records_sorted[:limit]]

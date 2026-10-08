@@ -3,6 +3,7 @@
 from datetime import datetime, timezone
 import os
 import secrets
+from typing import List
 from fastapi import APIRouter, BackgroundTasks, HTTPException, status
 from api.services.factory import get_queue, get_store
 from models.schemas import AnalysisResponse, AnalyzeRequest, AnalyzeResponse
@@ -48,3 +49,10 @@ def get_analysis(job_id: str) -> AnalysisResponse:
             detail=f"Analysis job {job_id} not found",
         )
     return AnalysisResponse(**record)
+
+
+@router.get("/analyses", response_model=List[AnalysisResponse])
+def get_recent_analyses(limit: int = 10) -> List[AnalysisResponse]:
+    store = get_store()
+    records = store.list_recent(limit=limit)
+    return [AnalysisResponse(**record) for record in records]

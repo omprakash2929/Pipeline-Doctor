@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pipeline Doctor - AI-Powered CI/CD Troubleshooting</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="logo-area">
+        <span class="icon">🩺</span>
+        <div>
+          <h1>Pipeline Doctor</h1>
+          <p class="subtitle">AI-powered CI/CD troubleshooting</p>
+        </div>
+      </div>
+      <div class="header-badges">
+        <span class="status-pill healthy">API Healthy</span>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="grid-layout">
+        <!-- Input Form Section -->
+        <section class="card form-card">
+          <div class="card-header">
+            <h2>Analyze Pipeline Failure</h2>
+            <button type="button" id="load-sample-btn" class="btn btn-secondary">
+              Load sample failure
+            </button>
+          </div>
+
+          <form id="analyze-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="repo-input">Repository</label>
+                <input
+                  type="text"
+                  id="repo-input"
+                  name="repository"
+                  placeholder="omprakash/demo-app"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="pipeline-select">Pipeline</label>
+                <select id="pipeline-select" name="pipeline" required>
+                  <option value="GitHub Actions">GitHub Actions</option>
+                  <option value="Jenkins">Jenkins</option>
+                  <option value="GitLab CI">GitLab CI</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="language-select">Language</label>
+                <select id="language-select" name="language">
+                  <option value="english">English</option>
+                  <option value="hinglish">Hinglish</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="logs-input">Failure Logs</label>
+              <textarea
+                id="logs-input"
+                name="logs"
+                rows="10"
+                placeholder="Paste failed CI/CD execution logs here..."
+                required
+              ></textarea>
+            </div>
+
+            <div id="error-message" class="alert-box error hidden"></div>
+
+            <div class="form-actions">
+              <button type="submit" id="submit-btn" class="btn btn-primary">
+                Analyze Pipeline
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Result Section -->
+        <section class="card result-card" id="result-section">
+          <div class="card-header">
+            <h2>Diagnosis Result</h2>
+            <div id="loading-indicator" class="loading-indicator hidden">
+              <span class="spinner"></span>
+              <span id="loading-text">Analyzing pipeline logs...</span>
+            </div>
+          </div>
+
+          <div id="result-placeholder" class="placeholder-box">
+            <span class="placeholder-icon">📋</span>
+            <p>Submit failure logs to see root cause analysis, evidence, and recommended fixes.</p>
+          </div>
+
+          <div id="result-container" class="hidden">
+            <!-- Dynamically populated via app.js -->
+          </div>
+        </section>
+      </div>
+
+      <!-- Recent Analyses Section -->
+      <section class="card recent-card">
+        <div class="card-header">
+          <h2>Recent Analyses</h2>
+          <button type="button" id="refresh-recent-btn" class="btn btn-icon" title="Refresh">
+            🔄
+          </button>
+        </div>
+        <div class="table-container">
+          <table class="recent-table">
+            <thead>
+              <tr>
+                <th>Job ID</th>
+                <th>Repository</th>
+                <th>Pipeline</th>
+                <th>Status</th>
+                <th>Category</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody id="recent-tbody">
+              <tr>
+                <td colspan="6" class="text-center text-muted">No recent analyses yet</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <p>Pipeline Doctor &bull; Local Backend Mode &bull; Fast &amp; Rule-Based Analysis</p>
+    </footer>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

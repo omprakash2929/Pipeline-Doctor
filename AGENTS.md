@@ -64,8 +64,8 @@ Update this as steps finish.
 - [x] Step 1: Skeleton, `/health`, `/api/analyze` (dummy)
 - [x] Step 2: Rule-based log parser
 - [x] Step 3: Queue and store abstractions (local), `GET /api/analysis/{job_id}`
-- [ ] Step 4: Dashboard
-- [ ] Step 5: Bedrock LLM fallback + Hinglish mode
+- [x] Step 4: Dashboard
+- [ ] Step 5: Bedrock LLM fallback 
 - [ ] Step 6: Real SQS + DynamoDB + `POST /process`
 - [ ] Step 7: GitHub Actions webhook
 - [ ] Step 8: Dockerfile + Elastic Beanstalk deploy (web + worker)
