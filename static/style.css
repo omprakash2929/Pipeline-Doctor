@@ -332,6 +332,18 @@ textarea {
   border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
+.badge-source-ai {
+  background-color: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+.badge-source-rules {
+  background-color: rgba(148, 163, 184, 0.2);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
 .result-meta {
   color: var(--text-secondary);
   font-size: 0.85rem;

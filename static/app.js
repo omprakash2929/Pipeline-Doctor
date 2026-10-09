@@ -181,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Category and Severity Badges
+    // Category, Severity, and Source Badges
     const badgesRow = document.createElement("div");
     badgesRow.style.display = "flex";
     badgesRow.style.gap = "8px";
@@ -199,6 +199,17 @@ document.addEventListener("DOMContentLoaded", () => {
       sevBadge.textContent = `Severity: ${data.severity.toUpperCase()}`;
       badgesRow.appendChild(sevBadge);
     }
+
+    const sourceBadge = document.createElement("span");
+    if (data.source === "llm") {
+      sourceBadge.className = "badge badge-source-ai";
+      sourceBadge.textContent = "Source: AI (Bedrock)";
+    } else {
+      sourceBadge.className = "badge badge-source-rules";
+      sourceBadge.textContent = "Source: Rule-based";
+    }
+    badgesRow.appendChild(sourceBadge);
+
     resultContainer.appendChild(badgesRow);
 
     // Root Cause block
@@ -209,7 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
     rcTitle.textContent = "Likely Root Cause";
     const rcContent = document.createElement("div");
     rcContent.className = "result-content-text";
-    if (data.category === "unknown") {
+    if (data.category === "unknown" && (!data.root_cause || data.root_cause.includes("Unable to determine"))) {
       rcContent.textContent = "Could not identify this error yet. Full logs may need manual review or AI diagnosis.";
     } else {
       rcContent.textContent = data.root_cause || "No root cause details available.";
@@ -274,26 +285,62 @@ document.addEventListener("DOMContentLoaded", () => {
       const fixTitle = document.createElement("div");
       fixTitle.className = "result-section-title";
       fixTitle.textContent = "Recommended Fix";
-      const fixContent = document.createElement("div");
-      fixContent.className = "result-content-text";
-      fixContent.textContent = data.fix;
       fixBlock.appendChild(fixTitle);
-      fixBlock.appendChild(fixContent);
+
+      if (Array.isArray(data.fix) && data.fix.length > 0) {
+        const fixList = document.createElement("ol");
+        fixList.style.paddingLeft = "20px";
+        fixList.style.display = "flex";
+        fixList.style.flexDirection = "column";
+        fixList.style.gap = "4px";
+        data.fix.forEach((step) => {
+          const li = document.createElement("li");
+          li.className = "result-content-text";
+          li.textContent = step;
+          fixList.appendChild(li);
+        });
+        fixBlock.appendChild(fixList);
+      } else if (typeof data.fix === "string" && data.fix.trim()) {
+        const fixContent = document.createElement("div");
+        fixContent.className = "result-content-text";
+        fixContent.textContent = data.fix;
+        fixBlock.appendChild(fixContent);
+      }
       resultContainer.appendChild(fixBlock);
     }
 
-    // Prevention section (only if data has prevention)
-    if (data.prevention) {
+    // Prevention section (only if data has prevention entries)
+    const hasPrevention = Array.isArray(data.prevention)
+      ? data.prevention.length > 0
+      : typeof data.prevention === "string" && data.prevention.trim().length > 0;
+
+    if (hasPrevention) {
       const prevBlock = document.createElement("div");
       prevBlock.className = "result-section-block";
       const prevTitle = document.createElement("div");
       prevTitle.className = "result-section-title";
       prevTitle.textContent = "Prevention";
-      const prevContent = document.createElement("div");
-      prevContent.className = "result-content-text";
-      prevContent.textContent = data.prevention;
       prevBlock.appendChild(prevTitle);
-      prevBlock.appendChild(prevContent);
+
+      if (Array.isArray(data.prevention)) {
+        const prevList = document.createElement("ul");
+        prevList.style.paddingLeft = "20px";
+        prevList.style.display = "flex";
+        prevList.style.flexDirection = "column";
+        prevList.style.gap = "4px";
+        data.prevention.forEach((p) => {
+          const li = document.createElement("li");
+          li.className = "result-content-text";
+          li.textContent = p;
+          prevList.appendChild(li);
+        });
+        prevBlock.appendChild(prevList);
+      } else {
+        const prevContent = document.createElement("div");
+        prevContent.className = "result-content-text";
+        prevContent.textContent = data.prevention;
+        prevBlock.appendChild(prevContent);
+      }
       resultContainer.appendChild(prevBlock);
     }
   }

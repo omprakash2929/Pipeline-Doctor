@@ -1,6 +1,6 @@
 """Pydantic schemas for request and response validation."""
 
-from typing import Literal, Optional
+from typing import List, Literal, Optional, Union
 from pydantic import BaseModel, Field, field_validator
 
 
@@ -32,9 +32,11 @@ class Diagnosis(BaseModel):
     category: str = Field(..., description="Detected error category or 'unknown'")
     severity: Literal["low", "medium", "high", "critical"] = Field(..., description="Severity level")
     root_cause: str = Field(..., description="Identified root cause explanation")
-    fix: str = Field(..., description="Recommended fix or troubleshooting action")
+    fix: Union[str, List[str]] = Field(..., description="Recommended fix or troubleshooting action")
     evidence: list[str] = Field(default_factory=list, description="Matching log lines providing evidence (max 5)")
     confidence: float = Field(..., ge=0.0, le=1.0, description="Detection confidence between 0.0 and 1.0")
+    source: Optional[Literal["rules", "llm"]] = Field(default="rules", description="Source of diagnosis")
+    prevention: Optional[Union[List[str], str]] = Field(default_factory=list, description="Prevention steps")
 
 
 class AnalysisResponse(BaseModel):
@@ -47,7 +49,9 @@ class AnalysisResponse(BaseModel):
     category: Optional[str] = Field(default=None, description="Detected error category")
     severity: Optional[str] = Field(default=None, description="Detected severity level")
     root_cause: Optional[str] = Field(default=None, description="Identified root cause")
-    fix: Optional[str] = Field(default=None, description="Recommended fix")
+    fix: Optional[Union[str, List[str]]] = Field(default=None, description="Recommended fix")
     evidence: Optional[list[str]] = Field(default=None, description="Matching evidence lines")
     confidence: Optional[float] = Field(default=None, description="Detection confidence")
     error: Optional[str] = Field(default=None, description="Failure error details")
+    source: Optional[str] = Field(default=None, description="Source of diagnosis ('rules' or 'llm')")
+    prevention: Optional[Union[List[str], str]] = Field(default=None, description="Prevention steps")
